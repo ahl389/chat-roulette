@@ -1,21 +1,19 @@
-// deploy on heroku
 // mobile code
 // document code
 // clean code
 // convert to arrow functions and chained promises
-// fix homepage and app.py - delete extra stuff, no separate landing page
 
 $(function() {
-    // { obj - Client } Our interface to the chat client
+    // Our interface to the chat client
     var chatClient;
     
-    // { String }       Randomly assigned username
+    // Randomly assigned username
     var username;
     
-    // {obj - Channel } Channel that the user of the client is currently in
+    // Channel that the user of the client is currently in
     var activeChannel;
     
-    // { Boolean }      Whether or not there is another channel
+    // Whether or not there is another channel
     var next;
   
     // get token and initialize client
@@ -36,7 +34,7 @@ $(function() {
         }
     });
     
-    // Bind click events
+    // Bind click and keyboard events
     $('#start').on('click', function(){
         var topic = prompt('Choose a topic for your chatroom:');
         createChannel(topic);
@@ -50,6 +48,26 @@ $(function() {
         leaveCurrentChannel(currentChannel);
     });
     
+    $('.message-input-area').on('keydown', 'input', function(e) {
+        var input = $(this);
+        var channelName = $('.message-space').attr('id');
+        
+        if (e.keyCode == 13) {
+            chatClient.getChannelBySid(channelName).then(function(channel){
+                channel.sendMessage(input.val())
+                input.val('');
+            }).catch(function(error){
+                print(error, true)
+            });
+        }
+    });
+    
+    
+    /**
+     * Prints message to user
+     * @param {string}  message - Message body
+     * @param {boolean} err - Whether or not message is an error message
+     */
     function print(message, err) {
         var newAlert = $(`<div class = "am">${message}</div>`);
         
@@ -60,7 +78,11 @@ $(function() {
         $('.alerts').empty()
                     .append(newAlert);
     }
- 
+
+    /**
+     * Creates a new channel
+     * @param {string}  topic - User inputted topic for new channel
+     */
     function createChannel(topic) {
         chatClient.getPublicChannelDescriptors().then(function(channels){
             if (channels.items.length < 25) {
@@ -82,8 +104,9 @@ $(function() {
         })
     }
     
-   
-    
+    /**
+     * Finds a random channel for user to join
+     */
     function joinRandomChannel() {
         print('Stay tuned, a random channel is being found.');
         
@@ -113,26 +136,27 @@ $(function() {
                 rand = Math.floor(Math.random() * numChannels);
                 
                 if (inChannel && activeChannels[rand].sid == activeChannel.sid) {
-                    rand = rand < numChannels ? rand+1 : 0
+                    rand = rand < numChannels - 1 ? rand+1 : 0
                 } 
                 
                 selectedChannel = activeChannels[rand];
-                console.log(activeChannels)
-                console.log(rand)
-                console.log(selectedChannel)
                 chatClient.getChannelBySid(selectedChannel.sid)
-                    .then(joinChannel)
+                            .then(joinChannel)
             }
         });
     }
 
+    /**
+     * Removes the user from their current channel
+     */
     function leaveCurrentChannel(){
-        activeChannel.leave().then(function(channel){
-            print(`You've left ${channel.friendlyName}`);
-        });
+        activeChannel.leave().then(function(channel){});
     }
 
-  // Helper function to print chat message to the chat window
+    /**
+     * Prints chat message from user to chat window
+     * @param {string}  message - Message body
+     */
     function printMessage(message) { 
         var container = $('.message-space#' + message.channel.sid);
         var newMessage = $(`<div class = "message">
@@ -141,7 +165,6 @@ $(function() {
                             </div>`);
 
         container.append(newMessage);
-        //newMessage.insertBefore(container.children('.message-input-area'));
         
         if (message.author === username) {
             newMessage.addClass('me');
@@ -149,10 +172,14 @@ $(function() {
         } 
     }
 
-  
+    /**
+     * Add user to channel and creates message and channel listener
+     * @param {obj}  channel - The channel object representing the channel
+       that the user is leaving
+     */
     function joinChannel(channel){
         channel.join().then(function(channel){
-            print(`You've joined a random channel.`)
+            print('');
             activeChannel = channel;
             addMessageListener(channel);
             addChannelListener(channel);
@@ -162,17 +189,22 @@ $(function() {
         });
     }
     
+    /**
+     * Adds a listener to detect when a channel has been removed from the app
+     * @param {obj}  channel - The channel object representing the channel
+       that's been removed
+     */
     function addChannelListener(channel) {
         chatClient.on('channelRemoved', function(channel){
-            console.log('removed')
             updateMessageSpace(channel);
         });
-        // chatClient.on('channelUpdated', function(channel){
-//             console.log('updated')
-//             updateMessageSpace(channel);
-//         });
     }
   
+    /**
+     * Adds listener to detect when a new message has been sent to a channel
+     * @param {obj}  channel - The channel object representing the channel
+       that has received a message
+     */
     function addMessageListener(channel) {
         channel.on('messageAdded', function(message) {
             printMessage(message);
@@ -180,22 +212,12 @@ $(function() {
         });
     }
       
-    $('.message-input-area').on('keydown', 'input', function(e) {
-        var input = $(this);
-        var channelName = $('.message-space').attr('id');
-        console.log(channelName)
-        //activeChatWindow = $(this).parent('.message-space');
-        
-        if (e.keyCode == 13) {
-            chatClient.getChannelBySid(channelName).then(function(channel){
-                channel.sendMessage(input.val())
-                input.val('');
-            }).catch(function(error){
-                print(error, true)
-            });
-        }
-    });
-
+    
+    /**
+     * Creates chat window after user joins or starts a channel
+     * @param {obj}  channel - The channel object representing the channel
+       that the user is now in
+     */
     function createMessageSpace(channel) {
         $('.message-area').show();
         $('.welcome').hide();
@@ -214,12 +236,22 @@ $(function() {
         loadMessages(channel);
     }
     
+    /**
+     * Closes chat window after channel has been deleted
+     * @param {obj}  channel - The channel object representing the channel
+       that is now closed
+     */
     function updateMessageSpace(channel) {
-        $('.title').text(`This room is now closed.`);
+        $('.title').text(`This owner of this room has left and this room is now closed.`);
         $('.message-input-area').hide();
         print('Please join or create a new room');
     }
-
+    
+    /**
+     * Loads last 30 messages in channel to chat window
+     * @param {obj}  channel - The channel object representing the channel
+       that the user is now in
+     */
     function loadMessages(channel){
         channel.getMessages(30).then(function(messages){
             for (let message of messages.items) {
@@ -232,9 +264,12 @@ $(function() {
         });
     }
     
+    /**
+     * Scrolls to the bottom of the chat window
+     */
     function scrollMessageWindow() {
         $('.message-space').animate({ 
-            scrollTop: $('.message-space')[0].scrollHeight + 100
+            scrollTop: $('.message-space')[0].scrollHeight + 75
         }, 200);
     }
 });

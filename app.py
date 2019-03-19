@@ -31,23 +31,7 @@ load_dotenv(dotenv_path)
 
 @app.route('/')
 def index():
-    return app.send_static_file('chat/index.html')
-
-# @app.route('/video/')
-# def video():
-#     return app.send_static_file('video/index.html')
-#
-# @app.route('/sync/')
-# def sync():
-#     return app.send_static_file('sync/index.html')
-#
-# @app.route('/notify/')
-# def notify():
-#     return app.send_static_file('notify/index.html')
-#
-# @app.route('/chat/')
-# def chat():
-#     return app.send_static_file('chat/index.html')
+    return app.send_static_file('index.html')
     
 
 # Basic health check - check environment variables have been configured
@@ -100,41 +84,27 @@ def delete():
                                     .user_channels \
                                     .list()
         
-        
+        # Find channels that the now offline user created and then delete them
         for channel in user_channels:
             cid = channel.channel_sid
             channel = client.chat.services(chat_service_sid) \
                                     .channels(cid) \
                                     .fetch()
-            logging.debug(channel)
-            
+                                    
             created_by = channel.created_by
             
             if created_by == identity:
                 client.chat.services(chat_service_sid) \
                         .channels(cid) \
                         .delete()
-                logging.debug('deleted')
-                #loggingdebug(deleted)
-        
-    
-    # account_sid = 'ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-#     auth_token = 'your_auth_token'
-#     client = Client(account_sid, auth_token)
-#
-#     client.chat.services('ISXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX') \
-#                .channels('CHXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX') \
-#                .delete()
-    
     
     return 'ok'
     
     
-    # get the identity from the request, or make one up
-    # identity = content.get('identity', fake.user_name())
- #    return generateToken(fake.user_name())
+# get the identity from the request, or make one up
+# identity = content.get('identity', fake.user_name())
+# return generateToken(fake.user_name())
     
-
 @app.route('/token', methods=['POST'])
 def createToken():
     # Get the request json or form data
