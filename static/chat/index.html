@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Twilio Chat Quickstart</title>
+    <link rel="shortcut icon" href="//www.twilio.com/marketing/bundles/marketing/img/favicons/favicon.ico">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <section class = "welcome">
+        <div class = "welcome-message">
+            <h5>Welcome to Chatroom Roulette, made by Twilio magic.</h5>
+            <p>A random user name is being generated for you.</p>
+        </div>
+        <button class = "welcome-button" id = "join">Join a Random Chat Room</button>
+        <button class = "welcome-button" id = "start">Start a Chat Room</button>
+    </section>
+    
+    <section class = "app-messaging">
+        <div class = "alerts">
+        </div>
+    </section>
+    
+    <section class = "message-area">
+        <div class = "message-space-title-bar">
+            <span class = "title"></span> 
+            <button class = "action" id = "next">Next</button>
+        </div>        
+        <div class = "message-space">
+            
+           
+        </div>
+        <div class = "message-input-area">
+            <input class = "message-input" type="text" placeholder = "Type a message and then press enter to send" autofocus>
+        </div>
+
+    </section>
+    
+    
+
+    <script src="https://media.twiliocdn.com/sdk/js/common/v0.1/twilio-common.min.js"></script>
+    <script src="https://media.twiliocdn.com/sdk/js/chat/v3.0/twilio-chat.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="index3.js"></script>
+</body>
+</html>
