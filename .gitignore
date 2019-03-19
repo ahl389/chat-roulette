@@ -1,4 +1,6 @@
 .env
+ngrok
+ngrok-stable-darwin-amd64.zip
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -93,3 +95,4 @@ ENV/
 # Docker
 Dockerfile
 .dockerignore
+
