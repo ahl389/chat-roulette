@@ -1,4 +1,6 @@
 .env
+.env.example
+.DS_Store
 ngrok
 ngrok-stable-darwin-amd64.zip
 
