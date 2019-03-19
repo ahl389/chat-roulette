@@ -252,14 +252,6 @@ p.mobile-alert {
     .app-messaging {
         display: none;
     }
-
-    /*.message-space {
-        top: 25px;
-        position: fixed;
-        bottom: 25px;
-        left: 25px;
-        right: 25px;
-    }*/
 }
 
 
