@@ -223,6 +223,45 @@ section input {
     cursor: default;
 }
 
+p.mobile-alert {
+    display: none;
+}
+
+
+@media only screen and (max-width: 767px) {
+    .message-area {
+        width: 80%;
+    }
+    
+    p.mobile-alert {
+        display: block;
+    }
+    
+    p.desktop-alert {
+        display: none;
+    }
+    
+    .message-space-title-bar {
+        justify-content: center;
+    }
+    
+    .welcome-button {
+        display: none !important;
+    }
+    
+    .app-messaging {
+        display: none;
+    }
+
+    /*.message-space {
+        top: 25px;
+        position: fixed;
+        bottom: 25px;
+        left: 25px;
+        right: 25px;
+    }*/
+}
+
 
 
 
